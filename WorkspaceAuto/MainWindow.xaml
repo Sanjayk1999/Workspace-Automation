@@ -1,0 +1,41 @@
+﻿<Window x:Class="WorkspaceAuto.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WorkspaceAuto"
+        xmlns:vm ="clr-namespace:WorkspaceAuto.ViewModels"
+        xmlns:views="clr-namespace:WorkspaceAuto.Views"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="600" Width="1000" WindowStyle="None" Background="#35263b" ResizeMode="NoResize" MouseDown="Grid_MouseDown" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:AddWorkspaceViewModel}">
+            <views:AddWorkspaceView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+            <views:DashboardView/>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="20*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="5*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Row="0" Grid.Column="0" Margin="0"></StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="1"  Orientation="Horizontal" Background="#58475e" Margin="0">
+            <Button x:Name="CloseBtn" Style="{StaticResource PrimaryButtonStyle}" Content="Close" Click="Button_Click"/>
+            <Button x:Name="MinimizeBtn" Style="{StaticResource PrimaryButtonStyle}" Content="Minimize" Click="MinimizeBtn_Click"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="0" Background="#35263b">
+            <Button Style="{StaticResource PrimaryButtonStyle}" Content="Home" Command="{Binding ShowDashboardCommand}"/>
+            <Button Style="{StaticResource PrimaryButtonStyle}" Content="Add Workspace" Command="{Binding ShowAddWorkSpaceCommand}"/>
+        </StackPanel>
+        <ContentControl Grid.Row="1" Background="#2a272b" Grid.Column="1" Content="{Binding ContentViewModel}">
+            
+        </ContentControl>
+    </Grid>
+</Window>
