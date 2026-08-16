@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows.Input;
 using WorkspaceAuto.Commands;
 using WorkspaceAuto.Interfaces;
+using static WorkspaceAuto.Enums.Screens;
 
 namespace WorkspaceAuto.ViewModels
 {
@@ -14,6 +15,14 @@ namespace WorkspaceAuto.ViewModels
         public IContentViewModel ContentViewModel { 
             get => contentViewModel; 
             set => SetProperty(ref contentViewModel, value);
+        }
+
+        private ContentScreen _currentPage;
+
+        public ContentScreen CurrentPage
+        {
+            get => _currentPage;
+            set => SetProperty(ref _currentPage, value);
         }
 
         //Commands
@@ -29,15 +38,18 @@ namespace WorkspaceAuto.ViewModels
 
         public MainWindowViewModel()
         {
+            CurrentPage = ContentScreen.Dashboard;
             DashboardViewModel = new DashboardViewModel();
             AddWorkspaceViewModel = new AddWorkspaceViewModel();
             ContentViewModel = DashboardViewModel;
             ShowAddWorkSpaceCommand = new NavigationCommand(() =>
             {
                 ContentViewModel = AddWorkspaceViewModel;
+                CurrentPage = ContentScreen.AddWorkspace;
             });
             ShowDashboardCommand = new NavigationCommand(async () => {
                 ContentViewModel = DashboardViewModel;
+                CurrentPage = ContentScreen.Dashboard;
                 DashboardViewModel.SelectedWorkspace = null;
                 await DashboardViewModel.LoadWorkspaces();
             });
