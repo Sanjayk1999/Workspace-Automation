@@ -31,8 +31,34 @@
             <Button x:Name="MinimizeBtn" Style="{StaticResource PrimaryButtonStyle}" Content="Minimize" Click="MinimizeBtn_Click"/>
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="0" Background="#35263b">
-            <Button Style="{StaticResource PrimaryButtonStyle}" Content="Home" Command="{Binding ShowDashboardCommand}"/>
-            <Button Style="{StaticResource PrimaryButtonStyle}" Content="Add Workspace" Command="{Binding ShowAddWorkSpaceCommand}"/>
+            <Button Content="Home" Command="{Binding ShowDashboardCommand}">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CurrentPage}" Value="Dashboard">
+                                <Setter Property="Background"
+                            Value="#58475e"/>
+                                <Setter Property="Foreground"
+                            Value="White"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button Content="Add Workspace" Command="{Binding ShowAddWorkSpaceCommand}">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CurrentPage}" Value="AddWorkspace">
+                                <Setter Property="Background"
+                            Value="#58475e"/>
+                                <Setter Property="Foreground"
+                            Value="White"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
         </StackPanel>
         <ContentControl Grid.Row="1" Background="#2a272b" Grid.Column="1" Content="{Binding ContentViewModel}">
             
