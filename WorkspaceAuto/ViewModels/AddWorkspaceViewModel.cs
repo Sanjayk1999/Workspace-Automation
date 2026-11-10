@@ -5,6 +5,11 @@ using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using ToastNotifications;
+using ToastNotifications.Lifetime;
+using ToastNotifications.Lifetime.Clear;
+using ToastNotifications.Messages;
+using ToastNotifications.Position;
 using WorkspaceAuto.Commands;
 using WorkspaceAuto.Helpers;
 using WorkspaceAuto.Interfaces;
@@ -25,6 +30,7 @@ namespace WorkspaceAuto.ViewModels
         public ICommand SaveWorkspaceCommand { get; set; }
 
         private IWorkspaceRepository repository;
+        private Notifier _notifier;
 
         public AddWorkspaceViewModel()
         {
@@ -35,6 +41,26 @@ namespace WorkspaceAuto.ViewModels
             SaveWorkspaceCommand = new CaptureWorkspaceCommand(SaveWorkspace);
             CaptureWorkspace();
             repository = new JsonWorkspaceRepository();
+            _notifier = new Notifier(cfg =>
+            {
+                cfg.PositionProvider = new WindowPositionProvider(
+                    parentWindow: Application.Current.MainWindow,
+                    corner: Corner.BottomRight,
+                    offsetX: 25,
+                    offsetY: 100);
+
+                cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(
+                    notificationLifetime: TimeSpan.FromSeconds(6),
+                    maximumNotificationCount: MaximumNotificationCount.FromCount(6));
+
+                cfg.Dispatcher = Application.Current.Dispatcher;
+
+                cfg.DisplayOptions.TopMost = false;
+                cfg.DisplayOptions.Width = 250;
+            });
+
+            _notifier.ClearMessages(new ClearAll());
+            
         }
 
         private void CaptureWorkspace()
@@ -92,20 +118,20 @@ namespace WorkspaceAuto.ViewModels
         {
             if (String.IsNullOrWhiteSpace(WorkspaceName))
             {
-                MessageBox.Show("Please Enter a Workdpace name to Save");
+                _notifier.ShowError("Please Enter a Workdpace name to Save");
                 return;
             }
 
             var selectedWorkspaceItems = WorkSpaceItems.Where(x=>x.IsSelected).ToList();
             if(selectedWorkspaceItems.Count == 0)
             {
-                MessageBox.Show("Please Select atlease one Workspace Item to Save");
+                _notifier.ShowError("Please Select atlease one Workspace Item to Save");
                 return;
             }
 
             if (await CheckIfDuplicateWorkspaceNameExists())
             {
-                MessageBox.Show("A Workspace with given name already exists");
+                _notifier.ShowError("A Workspace with given name already exists");
             }
 
             var workspace = new Workspace
@@ -117,11 +143,11 @@ namespace WorkspaceAuto.ViewModels
             try
             {
                 await repository.SaveAsync(workspace);
-                MessageBox.Show("Saved Workspace");
+                _notifier.ShowSuccess("Saved Workspace");
             }
             catch(Exception ex)
             {
-                MessageBox.Show("Error Occured While Saving");
+                _notifier.ShowError("Error Occured While Saving");
             }
         }
 

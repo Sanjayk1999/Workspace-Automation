@@ -6,8 +6,15 @@
              xmlns:local="clr-namespace:WorkspaceAuto.Views"
              xmlns:vm="clr-namespace:WorkspaceAuto.ViewModels"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:converters="clr-namespace:WorkspaceAuto.Converters"
+             xmlns:materialIcons="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <converters:WorkspaceSelectionConverter x:Key="WorkspaceSelectionConverter"/>
+        <converters:NulltoVisibilityConverter x:Key="NulltoVisibilityConverter"/>
+        <converters:BooltoVisibilityConverter x:Key="BooltoVisibilityConverter"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -24,28 +31,90 @@
         <TextBlock Grid.Row="2" Text="{Binding Workspaces.Count}" FontSize="12" Foreground="White" Margin="10,5"/>
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
             <ScrollViewer Grid.Row="3" Grid.Column="0"
       VerticalScrollBarVisibility="Auto">
-
+                <ScrollViewer.Resources>
+                    <Style TargetType="{x:Type ScrollBar}"
+               BasedOn="{StaticResource ModernScrollBarStyle}">
+                        <Setter Property="Width" Value="6"/>
+                        <Setter Property="MinWidth" Value="6"/>
+                        <Setter Property="MaxWidth" Value="6"/>
+                    </Style>
+                </ScrollViewer.Resources>
                 <ItemsControl ItemsSource="{Binding Path=Workspaces}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border Background="#58475e" Margin="10,5">
+                            <Border Margin="10,5" CornerRadius="5" Padding="2" Height="70">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="MouseLeftButtonDown">
-                                        <i:InvokeCommandAction Command="{Binding DataContext.SelectWorkspaceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                        <i:InvokeCommandAction Command="{Binding DataContext.SelectWorkspaceCommand , RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
-                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="#202D3D"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Value="True">
+
+                                                <DataTrigger.Binding>
+                                                    <MultiBinding Converter="{StaticResource WorkspaceSelectionConverter}">
+                                                        <Binding />
+                                                        <Binding Path="DataContext.SelectedWorkspace"
+                                     RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+
+                                                    </MultiBinding>
+                                                </DataTrigger.Binding>
+                                                <Setter Property="Background" Value="#1473E6"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <Grid Height="65">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Margin="5">
+                                        <TextBlock
                                             Text="{Binding Path=Name}"
                                             FontSize="15"
-                                            Foreground="White"/>
-                                    <Button Command="{Binding DataContext.LaunchWorkspaceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Content="Launch Workspace" Style="{StaticResource SecondaryButtonStyle}"/>
-                                </StackPanel>
+                                            Foreground="White"
+                                            Margin="3"
+                                        />
+                                        <TextBlock Margin="5" Text="{Binding Items.Count, StringFormat={}{0} items}" FontSize="11" Foreground="White"/>
+                                    </StackPanel>
+                                    <Image
+                                        Grid.Column="1"
+                                        Source="pack://application:,,,/WorkspaceAuto;component/Assests/Images/Forward.png"
+                                        Width="45"
+                                        Height="45"
+                                        VerticalAlignment="Center"
+                                        Margin="10,0,5,0"
+                                        Stretch="Uniform" 
+                                        />
+                                    <Grid.Style>
+                                        <Style TargetType="Grid">
+                                            <Setter Property="Background" Value="#202D3D"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Value="True">
+
+                                                    <DataTrigger.Binding>
+                                                        <MultiBinding Converter="{StaticResource WorkspaceSelectionConverter}">
+                                                            <Binding />
+                                                            <Binding Path="DataContext.SelectedWorkspace"
+                                     RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+
+                                                        </MultiBinding>
+                                                    </DataTrigger.Binding>
+                                                    <Setter Property="Background" Value="#141F30"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Grid.Style>
+                                </Grid>
                             </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -54,16 +123,71 @@
 
             </ScrollViewer>
             <StackPanel Grid.Row="3" Grid.Column="2">
-                <TextBlock Foreground="White" Text="{Binding SelectedWorkspace.Name}" FontSize="20"/>
+                <TextBlock Foreground="White" Text="{Binding SelectedWorkspace.Name}" HorizontalAlignment="Center" FontSize="20"/>
+                <StackPanel Visibility="{Binding SelectedWorkspace, Converter={StaticResource NulltoVisibilityConverter}}" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,5">
+                    <Button Width="100" Style="{StaticResource SecondaryButtonStyle}" Command="{Binding LaunchWorkspaceCommand}" CommandParameter="{Binding SelectedWorkspace}">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Image
+                            Source="pack://application:,,,/WorkspaceAuto;component/Assests/Images/play.png"
+                            Width="25"
+                            Height="25"
+                            VerticalAlignment="Center"
+                            Stretch="Uniform" 
+                            />
+                            <TextBlock Text="Launch All" Foreground="White" Margin="5,0,5,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                <Grid Visibility="{Binding SelectedWorkspace, Converter={StaticResource NulltoVisibilityConverter}}" Margin="5" Background="#202D3D">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock FontSize="13" Margin="5" Foreground="White" FontWeight="Bold" Grid.Column="0" Text="Name"/>
+                    <TextBlock FontSize="13" Margin="5" Foreground="White" FontWeight="Bold" Grid.Column="1" Text="Status"/>
+                </Grid>
                 <ItemsControl ItemsSource="{Binding SelectedWorkspace.Items}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Grid Margin="6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="1*"/>
+                                </Grid.ColumnDefinitions>
                                 <TextBlock
+                                            Grid.Column="0"
                                             Text="{Binding Path=Name}"
-                                            FontSize="15"
+                                            FontSize="12"
                                             Foreground="White"/>
-                                <TextBlock>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <materialIcons:MaterialIcon Grid.Column="1" HorizontalAlignment="Left" FontSize="16" Kind="CheckCircle" Foreground="Green"/>
+                                    <TextBlock Foreground="Green" Text="Ready"/>
+                                    <StackPanel.Style>
+                                        <Style TargetType="StackPanel">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=CanLaunch}" Value="True">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <materialIcons:MaterialIcon Grid.Column="1" HorizontalAlignment="Left" FontSize="16" Kind="Error" Foreground="Red"/>
+                                    <TextBlock Foreground="Red" Text="Error"/>
+                                    <StackPanel.Style>
+                                        <Style TargetType="StackPanel">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=CanLaunch}" Value="False">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
+                                </StackPanel>
+                                <!--<TextBlock Grid.Column="1">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Text" Value="Error"/>
@@ -77,8 +201,8 @@
                                             </Style.Triggers>
                                         </Style>
                                     </TextBlock.Style>
-                                </TextBlock>
-                            </StackPanel>
+                                </TextBlock>-->
+                            </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

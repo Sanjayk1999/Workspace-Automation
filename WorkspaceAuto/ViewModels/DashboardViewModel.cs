@@ -51,7 +51,7 @@ namespace WorkspaceAuto.ViewModels
             }
         }
 
-        private void LaunchWorkspace(Workspace workspace)
+        private async void LaunchWorkspace(Workspace workspace)
         {
             foreach (var item in workspace.Items)
             {
@@ -62,6 +62,7 @@ namespace WorkspaceAuto.ViewModels
                 catch (Exception ex)
                 {
                     item.CanLaunch = false;
+                    await repository.UpdateAsync(workspace);
                 }
             }
 
@@ -69,7 +70,13 @@ namespace WorkspaceAuto.ViewModels
 
         private void SelectWorkspace(Workspace workspace)
         {
+            if (SelectedWorkspace != null)
+            {
+                SelectedWorkspace.IsSelected = false;
+            }
+
             SelectedWorkspace = workspace;
+            SelectedWorkspace.IsSelected = true;
         }
     }
 }

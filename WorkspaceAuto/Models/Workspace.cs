@@ -13,5 +13,7 @@ namespace WorkspaceAuto.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public List<WorkspaceItem> Items { get; set; }
+
+        public bool IsSelected { get; set; }
     }
 }

@@ -6,8 +6,9 @@
         xmlns:local="clr-namespace:WorkspaceAuto"
         xmlns:vm ="clr-namespace:WorkspaceAuto.ViewModels"
         xmlns:views="clr-namespace:WorkspaceAuto.Views"
+        xmlns:materialIcons="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="1000" WindowStyle="None" Background="#35263b" ResizeMode="NoResize" MouseDown="Grid_MouseDown" WindowStartupLocation="CenterScreen">
+        Title="MainWindow" Height="600" Width="1000" WindowStyle="None" Background="#121A23" ResizeMode="NoResize" MouseDown="Grid_MouseDown" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <DataTemplate DataType="{x:Type vm:AddWorkspaceViewModel}">
             <views:AddWorkspaceView/>
@@ -26,41 +27,53 @@
             <ColumnDefinition Width="5*"/>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Row="0" Grid.Column="0" Margin="0"></StackPanel>
-        <StackPanel Grid.Row="0" Grid.Column="1"  Orientation="Horizontal" Background="#58475e" Margin="0">
-            <Button x:Name="CloseBtn" Style="{StaticResource PrimaryButtonStyle}" Content="Close" Click="Button_Click"/>
-            <Button x:Name="MinimizeBtn" Style="{StaticResource PrimaryButtonStyle}" Content="Minimize" Click="MinimizeBtn_Click"/>
+        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Background="#121A23" Margin="0">
+            <Button x:Name="CloseBtn" Style="{StaticResource PrimaryButtonStyle}" Click="Button_Click">
+                <materialIcons:MaterialIcon Grid.Column="1" HorizontalAlignment="Right" FontSize="16" Kind="Close" Foreground="White"/>
+            </Button>
+            <Button x:Name="MinimizeBtn" Style="{StaticResource PrimaryButtonStyle}" Click="MinimizeBtn_Click">
+                <materialIcons:MaterialIcon Grid.Column="1" HorizontalAlignment="Right" FontSize="16" Kind="Minimize" Foreground="White"/>
+            </Button>
         </StackPanel>
-        <StackPanel Grid.Row="1" Grid.Column="0" Background="#35263b">
-            <Button Content="Home" Command="{Binding ShowDashboardCommand}">
+        <StackPanel Grid.Row="1" Grid.Column="0" Background="#121A23">
+            <Button Command="{Binding ShowDashboardCommand}">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding CurrentPage}" Value="Dashboard">
                                 <Setter Property="Background"
-                            Value="#58475e"/>
+                            Value="#202D3D"/>
                                 <Setter Property="Foreground"
                             Value="White"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </Button.Style>
+                <StackPanel Orientation="Horizontal">
+                    <materialIcons:MaterialIcon Grid.Column="1" HorizontalAlignment="Right" FontSize="16" Kind="Home" Foreground="White"/>
+                    <TextBlock Text="Home"/>
+                </StackPanel>
             </Button>
-            <Button Content="Add Workspace" Command="{Binding ShowAddWorkSpaceCommand}">
+            <Button Command="{Binding ShowAddWorkSpaceCommand}">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding CurrentPage}" Value="AddWorkspace">
                                 <Setter Property="Background"
-                            Value="#58475e"/>
+                            Value="#202D3D"/>
                                 <Setter Property="Foreground"
                             Value="White"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </Button.Style>
+                <StackPanel Orientation="Horizontal">
+                    <materialIcons:MaterialIcon Grid.Column="1" HorizontalAlignment="Right" FontSize="16" Kind="Add" Foreground="White"/>
+                    <TextBlock Text="Add Workspace"/>
+                </StackPanel>
             </Button>
         </StackPanel>
-        <ContentControl Grid.Row="1" Background="#2a272b" Grid.Column="1" Content="{Binding ContentViewModel}">
+        <ContentControl Grid.Row="1" Background="#121A23" Grid.Column="1" Margin="0,20" Content="{Binding ContentViewModel}">
             
         </ContentControl>
     </Grid>
